@@ -39,4 +39,13 @@ public class Customer {
         this.name = name;
     }
     //endregions
+
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
