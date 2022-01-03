@@ -10,3 +10,5 @@ gh-pages/
 .DS_Store
 .env
 *.zip
+*.cache
+gh-pages
