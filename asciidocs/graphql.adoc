@@ -53,13 +53,13 @@ public class BookingResource {
     @Inject
     BookingRepository repo;
 
-    @Query("allBookings") <1>
+    @Query("allBookings") //<1>
     @Description("Get all bookings")
     public List<Booking> getAllBookings() {
         return repo.getAll();
     }
 
-    @Mutation("addBooking") <2>
+    @Mutation("addBooking") //<2>
     @Description("Add a booking")
     public Booking addBooking(Booking booking) {
         return repo.addBooking(booking);
