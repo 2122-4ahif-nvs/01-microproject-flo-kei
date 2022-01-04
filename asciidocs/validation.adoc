@@ -1,4 +1,4 @@
-= Microproject Hotel
+= Technology Notes: Validation (Hibernate Validator)
 Florian Keintzel
 1.0.1, 2022-01-04: Technology-Notes update
 ifndef::imagesdir[:imagesdir: images]
@@ -14,19 +14,10 @@ ifdef::backend-html5[]
 // print the toc here (not at the default position)
 //toc::[]
 
-== Datamodel
-plantuml::plantuml/cld.plantuml[format=svg,align="center"]
-
-== Description of the project
-This micro-project aims to give customers the possibility to book rooms, view their bookings as well as cancelling their bookings.
-
-
-== Description of used technologies
-Multiple technologies were used for realising these functionalities:
-
- * <<graphql.adoc#?,GraphQL>>
- * <<validation.adoc#?,Validation>>
- * <<grpc.adoc#?,gRPC>>
-
+== What is it?
+ - used for validating given
+    * input and output of rest services
+    * parameters and return values of functions
+ - can be implemented on entities
 
 
