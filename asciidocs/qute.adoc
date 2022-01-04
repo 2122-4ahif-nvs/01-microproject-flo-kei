@@ -56,6 +56,28 @@ public class QuteResource {
 <2> A regular REST-GET-Service is being created (with query param "name")
 <3> The Rest-Service returns the content of the filled-out template (html)
 
+Qute allows for loops that iterate over collections and create html
+elements for each of those elements.
+Furthermore placeholder can be used to access underlying referenced
+objects (such as the roomNumber of a room referenced by its booking).
+[source,html]
+----
+{#for booking in bookings}
+    <tr>
+    <th scope="row">#{booking.id}</th>
+    <td>
+        {booking.customer.name}
+    </td>
+    <td>
+        {booking.room.roomNumber}
+    </td>
+    <td>
+        {booking.bookingDate}
+    </td>
+    </tr>
+{/for}
+----
+
 The templates allow dynamic data insertion into plain html files, which can
 be seen in the screenshot below. It shows all bookings associated with the customer Ben.
 
