@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 
 @ApplicationScoped
@@ -25,7 +26,7 @@ public class BookingRepository {
     }
 
     @Transactional
-    public Booking addBooking(Booking booking) {
+    public Booking addBooking(@Valid Booking booking) {
         return em.merge(booking);
     }
 

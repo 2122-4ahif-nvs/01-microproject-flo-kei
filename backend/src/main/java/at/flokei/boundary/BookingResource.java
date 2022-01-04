@@ -12,6 +12,7 @@ import org.eclipse.microprofile.graphql.Mutation;
 import org.eclipse.microprofile.graphql.Query;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -35,7 +36,7 @@ public class BookingResource {
 
     @Mutation("addBooking")
     @Description("Add a booking")
-    public Booking addBooking(Booking booking) {
+    public Booking addBooking(@Valid Booking booking) {
         return repo.addBooking(booking);
     }
 }

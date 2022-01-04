@@ -28,7 +28,7 @@ ifdef::backend-html5[]
 quarkus ext add quarkus-hibernate-validator
 ----
 
- - add Validation constraints
+ - add preconfigured validation constraints
 []
 ----
 @NotBlank(message = "Name cannot be blank!")
@@ -47,6 +47,29 @@ private double pricePerNight;
 @NotNull(message = "Booking date cannot be null!")
 private LocalDate bookingDate;
 ----
+
+Endpoint validation:
+[source,java]
+----
+@Mutation("addBooking")
+@Description("Add a booking")
+public Booking addBooking(@Valid Booking booking) { //<1>
+    return repo.addBooking(booking);
+}
+----
+<1> @Valid Booking throws an exception whenever one of the underlying
+constraints of Booking is violated.
+
+Repository validation:
+[source,java]
+----
+@Transactional
+public Booking addBooking(@Valid Booking booking) { //<1>
+    return em.merge(booking);
+}
+----
+<2> Same as above, the @Valid constraint throws an exception whenever
+a constraint within the Booking class is breached.
 
 == Testing
 In order to test validation constraints, data must be first inserted and eventually

@@ -26,7 +26,7 @@ public class Booking {
     @JoinColumn()
     private HotelRoom room;
 
-
+    @NotNull(message = "Customer cannot be null!")
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id")
     private Customer customer;
