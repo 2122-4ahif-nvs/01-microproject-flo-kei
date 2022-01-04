@@ -3,7 +3,6 @@ package at.flokei.entity;
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "HOTEL_BOOKING")
@@ -20,23 +19,28 @@ public class Booking {
     @JsonbDateFormat("yyyy-MM-dd")
     private LocalDate departureDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn()
     private HotelRoom room;
 
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
-    public Booking(LocalDate bookingDate, LocalDate arrivalDate, LocalDate departureDate, HotelRoom room) {
+    public Booking(LocalDate bookingDate, LocalDate arrivalDate, LocalDate departureDate, HotelRoom room, Customer customer) {
         this.bookingDate = bookingDate;
         this.arrivalDate = arrivalDate;
         this.departureDate = departureDate;
         this.room = room;
+        this.customer = customer;
     }
 
     public Booking() {
 
     }
 
+    //region getter and setter
     public HotelRoom getRoom() {
         return room;
     }
@@ -76,5 +80,27 @@ public class Booking {
 
     public void setDepartureDate(LocalDate departureDate) {
         this.departureDate = departureDate;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+    //endregion
+
+
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "id=" + id +
+                ", bookingDate=" + bookingDate +
+                ", arrivalDate=" + arrivalDate +
+                ", departureDate=" + departureDate +
+                ", room=" + room +
+                ", customer=" + customer +
+                '}';
     }
 }
