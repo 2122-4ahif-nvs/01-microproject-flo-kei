@@ -1,0 +1,114 @@
+= Technology Notes: GraphQL
+Florian Keintzel
+1.0.1, 2022-01-04: Technology-Notes update
+ifndef::imagesdir[:imagesdir: images]
+//:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
+:sourcedir: ../src/main/java
+:icons: font
+:sectnums:    // Nummerierung der Überschriften / section numbering
+:toc: left
+
+//Need this blank line after ifdef, don't know why...
+ifdef::backend-html5[]
+
+// print the toc here (not at the default position)
+//toc::[]
+
+== What is it?
+ - a query language for requesting specific data
+ - client driven (the client determines which data shall be sent)
+ - provides descriptions of the data (self-documenting)
+ - doesn't send the entire object, only the requested data
+ - allows multiple resources to be requested at once (using object-references)
+ - is very performant
+ - has types
+ - allows api updates that don't break existing queries
+
+== Similar Technologies
+- REST
+- gRPC
+
+GraphQL is more performant than REST. It also simplifies the process of fetching referenced data
+(data can usually be fetched in one request compared to multiple ones that are sometimes needed in REST)
+It therefore fixes the problems of over- and under-fetching in rest.
+(Sometimes the received data is not sufficient, sometimes it includes too much as well as unnecessary data)
+
+== Implementation
+
+ - add graphQL and graphQL client
+[source]
+----
+quarkus ext add io.quarkus:quarkus-smallrye-graphql
+----
+[source]
+----
+quarkus ext add io.quarkus:quarkus-smallrye-graphql-client
+----
+
+ - add graphql api resource
+[source,java]
+----
+@GraphQLApi
+public class BookingResource {
+    @Inject
+    BookingRepository repo;
+
+    @Query("allBookings") <1>
+    @Description("Get all bookings")
+    public List<Booking> getAllBookings() {
+        return repo.getAll();
+    }
+
+    @Mutation("addBooking") <2>
+    @Description("Add a booking")
+    public Booking addBooking(Booking booking) {
+        return repo.addBooking(booking);
+    }
+}
+----
+
+<1> Queries allow to request data
+<2> Mutations allow to modify data
+
+== Testing
+For testing graphql endpoints, the graphql UI can be used.
+It is accessible at: http://localhost:8080/q/graphql-ui/
+
+image::graphql-ui-suggestions.png[]
+GraphQL UI automatically suggests queries, mutations as well as fields
+that can be selected or changed and their types.
+(Use Ctrl + Space to view suggestions)
+
+[source,graphql]
+----
+query listBookings{
+  allBookings{
+    id,
+    arrivalDate,
+    bookingDate,
+    departureDate
+    room{
+      id
+    }
+  }
+}
+
+mutation addBooking{
+  addBooking(booking: {
+    bookingDate: "2022-01-01",
+    arrivalDate: "2022-06-08",
+    departureDate: "2022-06-12"
+    ,room: {
+      id:1,
+      maxPeople: 4
+      pricePerNight:250,
+      roomNumber:6
+    }
+  }) {
+    id,
+    room{
+      id
+    }
+  }
+}
+----

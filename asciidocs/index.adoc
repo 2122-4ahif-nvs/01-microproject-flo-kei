@@ -1,6 +1,6 @@
-= Hotel
+= Microproject Hotel
 Florian Keintzel
-1.0.0, 2021-11-10: Initial Commit
+1.0.1, 2022-01-04: Technology-Notes update
 ifndef::imagesdir[:imagesdir: images]
 //:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
 :sourcedir: ../src/main/java
@@ -15,5 +15,18 @@ ifdef::backend-html5[]
 //toc::[]
 
 == Datamodel
-
 plantuml::plantuml/cld.plantuml[format=svg,align="center"]
+
+== Description of the project
+This micro-project aims to give customers the possibility to book rooms, view their bookings as well as cancelling their bookings.
+
+
+== Description of used technologies
+Multiple technologies were used for realising these functionalities:
+
+ * <<graphql.adoc#?,GraphQL>>
+// * <<validation.adoc#?,Validation>>
+// * <<grpc.adoc#?,gRPC>>
+
+
+
