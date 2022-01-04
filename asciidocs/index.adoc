@@ -26,6 +26,7 @@ Multiple technologies were used for realising these functionalities:
 
  * <<graphql.adoc#?,GraphQL>>
  * <<validation.adoc#?,Validation>>
+ * <<qute.adoc#?, Qute>>
  * <<grpc.adoc#?,gRPC>>
 
 

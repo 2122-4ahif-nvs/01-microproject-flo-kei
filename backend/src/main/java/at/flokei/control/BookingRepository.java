@@ -28,4 +28,11 @@ public class BookingRepository {
     public Booking addBooking(Booking booking) {
         return em.merge(booking);
     }
+
+    public List<Booking> getBookingsOfCustomer(String customerName) {
+        var query = em.
+                createQuery("select b from Booking b where b.customer.name = :NAME", Booking.class)
+                .setParameter("NAME",customerName);
+        return query.getResultList();
+    }
 }

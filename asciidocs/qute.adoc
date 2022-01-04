@@ -1,0 +1,67 @@
+= Technology Notes: GraphQL
+Florian Keintzel
+1.0.1, 2022-01-04: Technology-Notes update
+ifndef::imagesdir[:imagesdir: images]
+//:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
+:sourcedir: ../src/main/java
+:icons: font
+:sectnums:    // Nummerierung der Überschriften / section numbering
+:toc: left
+
+//Need this blank line after ifdef, don't know why...
+ifdef::backend-html5[]
+
+// print the toc here (not at the default position)
+//toc::[]
+
+== What is it?
+ - a templating framework
+ - plain html with placeholders gets filled with data
+
+== Similar Technologies
+ - Angular
+ - React
+Qute is a lot easier to set up, goes hand in hand with quarkus and is better for smaller projects.
+These two technologies however are good for building larger projects.
+
+== Implementation
+
+ - add qute dependency
+[]
+----
+quarkus ext add quarkus-resteasy-qute
+----
+
+ - add quteTemplate.txt (which just contains "Hello {name}!")
+ - add QuteResource Class
+[source,java]
+----
+@Path("api")
+public class QuteResource {
+    @Inject
+    Template quteTemplate; //<1>
+
+    @Inject
+    BookingRepository bookingRepo;
+
+    @GET
+    @Path("hello")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance getHello(@QueryParam("name") String name) { //<2>
+        return quteTemplate.data("name", name); //<3>
+    }
+}
+----
+<1> A reference to the template with the filename hello.* is injected.
+<2> A regular REST-GET-Service is being created (with query param "name")
+<3> The Rest-Service returns the content of the filled-out template (html)
+
+The templates allow dynamic data insertion into plain html files, which can
+be seen in the screenshot below. It shows all bookings associated with the customer Ben.
+
+image::qute-booking-overview-table.png[]
+Request URL: http://localhost:8080/api/bookings-formatted?name=Ben
+
+== Testing
+For testing qute templates, the swagger UI can be used.
+It is accessible at: http://localhost:8080/q/swagger-ui
