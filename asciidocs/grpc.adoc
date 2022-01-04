@@ -66,4 +66,11 @@ quarkus add quarkus-grpc
 
  - create proto file
  - execute mvn compile
- - add helloservice
+(to generate classes based on the proto file,
+these can then be found in target/generated-sources/grpc)
+ - add hello-service
+
+== Testing
+In order to test the gRPC server, the Quarkus Dev UI can be used:
+http://localhost:8080/q/dev/io.quarkus.quarkus-grpc/service?name=helloworld.Greeter
+

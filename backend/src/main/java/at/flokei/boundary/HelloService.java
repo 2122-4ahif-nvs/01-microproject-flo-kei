@@ -1,9 +1,8 @@
 package at.flokei.boundary;
 
-import io.grpc.stub.StreamObserver;
-import io.quarkus.example.Greeter;
-import io.quarkus.example.HelloReply;
-import io.quarkus.example.HelloRequest;
+import at.flokei.Greeter;
+import at.flokei.HelloReply;
+import at.flokei.HelloRequest;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Uni;
 
