@@ -21,3 +21,33 @@ ifdef::backend-html5[]
  - can be implemented on entities
 
 
+== Implementation
+ - add dependency
+[]
+----
+quarkus ext add quarkus-hibernate-validator
+----
+
+ - add Validation constraints
+[]
+----
+@NotBlank(message = "Name cannot be blank!")
+private String name;
+
+@Min(value = 1)
+private int roomNumber;
+
+@Min(value = 1)
+private int maxPeople;
+
+@Min(value = 5)
+private double pricePerNight;
+
+@JsonbDateFormat("yyyy-MM-dd")
+@NotNull(message = "Booking date cannot be null!")
+private LocalDate bookingDate;
+----
+
+== Testing
+In order to test validation constraints, data must be first inserted and eventually
+occurring exceptions must be caught and evaluated. (check if it's the expected exception)

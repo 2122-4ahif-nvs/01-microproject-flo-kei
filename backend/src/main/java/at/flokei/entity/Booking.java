@@ -2,6 +2,8 @@ package at.flokei.entity;
 
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
@@ -11,6 +13,7 @@ public class Booking {
     private Long id;
 
     @JsonbDateFormat("yyyy-MM-dd")
+    @NotNull(message = "Booking date cannot be null!")
     private LocalDate bookingDate;
 
     @JsonbDateFormat("yyyy-MM-dd")

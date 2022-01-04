@@ -1,12 +1,15 @@
 package at.flokei.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "HOTEL_CUSTOMER")
 public class Customer {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Name cannot be blank!")
     private String name;
 
     //region getter and setter

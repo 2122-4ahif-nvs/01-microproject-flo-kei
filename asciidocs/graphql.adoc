@@ -81,7 +81,7 @@ that can be selected or changed and their types.
 
 [source,graphql]
 ----
-query listBookings{
+query listBookings{ #<1>
   allBookings{
     id,
     arrivalDate,
@@ -93,7 +93,7 @@ query listBookings{
   }
 }
 
-mutation addBooking{
+mutation addBooking{ #<2>
   addBooking(booking: {
     bookingDate: "2022-01-01",
     arrivalDate: "2022-06-08",
@@ -112,3 +112,7 @@ mutation addBooking{
   }
 }
 ----
+the statements are used for
+
+<1> selecting data from all bookings
+<2> adding a new booking

@@ -1,14 +1,18 @@
 package at.flokei.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 
 @Entity
 @Table(name = "HOTEL_ROOM")
 public class HotelRoom {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Min(value = 1)
     private int roomNumber;
+    @Min(value = 1)
     private int maxPeople;
+    @Min(value = 5)
     private double pricePerNight;
 
     //region getter and setter

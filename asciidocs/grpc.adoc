@@ -24,7 +24,8 @@ ifdef::backend-html5[]
  - REST
  - graphQL
 
-They both are not intended for calling functions.
+They both are not intended for calling functions remotely.
+They are only meant to create read update and delete data. (CRUD)
 
 == Implementation
     - add gRPC:
