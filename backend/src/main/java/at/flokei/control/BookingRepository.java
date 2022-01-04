@@ -1,11 +1,13 @@
 package at.flokei.control;
 
 import at.flokei.entity.Booking;
+import at.flokei.entity.Customer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @ApplicationScoped
 public class BookingRepository {
@@ -14,6 +16,16 @@ public class BookingRepository {
 
     @Transactional
     public Booking save(Booking booking) {
+        return em.merge(booking);
+    }
+
+    public List<Booking> getAll() {
+        var query = em.createQuery("select b from Booking b", Booking.class);
+        return query.getResultList();
+    }
+
+    @Transactional
+    public Booking addBooking(Booking booking) {
         return em.merge(booking);
     }
 }
