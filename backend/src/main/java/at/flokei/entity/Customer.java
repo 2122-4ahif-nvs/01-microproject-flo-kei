@@ -1,16 +1,33 @@
 package at.flokei.entity;
 
+import io.quarkus.security.jpa.Password;
+import io.quarkus.security.jpa.Roles;
+import io.quarkus.security.jpa.UserDefinition;
+import io.quarkus.security.jpa.Username;
+
+import javax.management.relation.Role;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "HOTEL_CUSTOMER")
+@UserDefinition
 public class Customer {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Name cannot be blank!")
+    @Username
     private String name;
+
+    @Password
+    @NotBlank(message = "Password cannot be blank")
+    private String pw;
+
+    @ManyToMany
+    public List<Role> role = new ArrayList<>();
 
     //region getter and setter
 
