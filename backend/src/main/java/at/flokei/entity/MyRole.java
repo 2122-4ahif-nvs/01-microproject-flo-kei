@@ -7,14 +7,14 @@ import java.util.List;
 
 @Entity
 @Table(name = "role")
-public class Role {
+public class MyRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @ManyToMany(mappedBy = "roles")
-    public List<Customer> users;
+    public List<Customer> customers;
 
     @RolesValue
     public String role;

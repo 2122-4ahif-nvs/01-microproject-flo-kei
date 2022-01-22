@@ -1,11 +1,12 @@
 package at.flokei.entity;
 
+import io.quarkus.elytron.security.common.BcryptUtil;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
 import io.quarkus.security.jpa.UserDefinition;
 import io.quarkus.security.jpa.Username;
 
-import javax.management.relation.Role;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "HOTEL_CUSTOMER")
 @UserDefinition
-public class Customer {
+public class Customer extends PanacheEntityBase {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -27,7 +28,10 @@ public class Customer {
     private String pw;
 
     @ManyToMany
-    public List<Role> role = new ArrayList<>();
+    public List<MyRole> roles = new ArrayList<>();
+
+    @Roles
+    public String role;
 
     //region getter and setter
 
@@ -46,6 +50,18 @@ public class Customer {
         return id;
     }
 
+    public List<MyRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<MyRole> role) {
+        this.roles = role;
+    }
+
+    public String getPw() {
+        return pw;
+    }
+
     //endregion
 
     //region constructor
@@ -57,6 +73,14 @@ public class Customer {
         this.name = name;
     }
     //endregions
+
+    public static void add(String username, String password, String role) {
+        Customer user = new Customer();
+        user.name = username;
+        user.pw = BcryptUtil.bcryptHash(password);
+        user.role = role;
+        user.persist();
+    }
 
 
     @Override
