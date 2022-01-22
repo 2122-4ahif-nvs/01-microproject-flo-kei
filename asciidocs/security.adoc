@@ -1,0 +1,146 @@
+= Technology Notes: Security with JPA
+Florian Keintzel
+1.0.1, 2022-01-22: JPA-Security Implementation
+ifndef::imagesdir[:imagesdir: images]
+//:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
+:sourcedir: ../src/main/java
+:icons: font
+:sectnums:    // Nummerierung der Überschriften / section numbering
+:toc: left
+
+//Need this blank line after ifdef, don't know why...
+ifdef::backend-html5[]
+ifdef::backend-html5[]
+
+// print the toc here (not at the default position)
+//toc::[]
+
+== What is it?
+- Security in Quarkus is used to limit the access users have in terms of
+  * which pages they can visit
+  * how they can interact with the server
+
+- Security in quarkus can be realised using a single one or a mix of the following techniques:
+ * https://quarkus.io/guides/security-properties[Security with .properties file]
+ * https://quarkus.io/guides/security-jpa[Security with JPA]
+ * https://quarkus.io/guides/security-jdbc[Security with JDBC]
+ * https://quarkus.io/guides/security-openid-connect-web-authentication[Security with OpenID Connect for Web-Applications]
+ * https://quarkus.io/guides/security-openid-connect[Security with OpenID Connect for Service-Applications]
+
+== Similar Technologies
+- Spring Security
+- .NET Core Security
+
+== Related Technologies
+- OAuth 2.0
+- Keycloak
+
+== Implementation
+
+- add necessary extensions:
+[source]
+----
+quarkus ext add io.quarkus:quarkus-security-jpa
+----
+
+- add role class
+[source,java]
+----
+@Entity
+@Table(name = "role")
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @ManyToMany(mappedBy = "roles")
+    public List<Customer> users;
+
+    @RolesValue //<1>
+    public String role;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+}
+----
+
+<1> Specifies the name of the role, this way jpa-security knows, which class should be used for roles and which property is used for the name
+
+Modify Customer class to be used as User-Class for authentication as well.
+[source,java]
+----
+@Entity
+@Table(name = "HOTEL_CUSTOMER")
+@UserDefinition //<1>
+public class Customer {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Name cannot be blank!")
+    @Username //<2>
+    private String name;
+
+    @Password //<3>
+    @NotBlank(message = "Password cannot be blank")
+    private String pw;
+
+    @ManyToMany
+    public List<Role> role = new ArrayList<>();
+}
+----
+
+<1> Declares Class as User, which can be used by jpa-authentication
+<2> Specifies the name field as the username used for authentication
+<3> Adds a field for storing the user-chosen password (not in plaintext of course)
+
+Add permission specifications to Resources, Endpoints, APIs, Services.
+
+[source,java]
+----
+@GET
+    @PermitAll //<1>
+    @Path("hello")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance getHello(@QueryParam("name") String name) {
+        return quteTemplate.data("name", name);
+    }
+----
+
+<1> allows anyone to access the resource
+
+[source,java]
+----
+@GET
+    @RolesAllowed("admin") //<1>
+    @Path("bookings")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance getBookings(@QueryParam("name") String name) {
+        var bookings = bookingRepo.getBookingsOfCustomer(name);
+        return quteBookingOverview.data("bookings", bookings);
+    }
+----
+<1> Only allows access to those with the role "admin"
+
+== Testing
+For testing the current access authentication, use the http requests given in the http-requests folder.
+
+[]
+----
+###
+GET localhost:8080/api/hello?name=world HTTP/1.1
+# public service should work
+
+###
+GET http://localhost:8080/api/bookings-without-qute
+# view all bookings should fail because of lacking permissions (no auth)
+
+###
+GET http://admin:admin@localhost:8080/api/bookings-without-qute
+# view all bookings should work because of admin user
+----

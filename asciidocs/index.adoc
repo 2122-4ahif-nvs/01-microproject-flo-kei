@@ -28,6 +28,7 @@ Multiple technologies were used for realising these functionalities:
  * <<validation.adoc#?,Validation>>
  * <<qute.adoc#?, Qute>>
  * <<grpc.adoc#?,gRPC>>
+ * <<security.adoc#?,Security with JPA>>
 
 
 
