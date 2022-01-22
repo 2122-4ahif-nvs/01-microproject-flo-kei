@@ -4,6 +4,8 @@ import at.flokei.control.BookingRepository;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -26,6 +28,7 @@ public class QuteResource {
     BookingRepository bookingRepo;
 
     @GET
+    @PermitAll
     @Path("hello")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance getHello(@QueryParam("name") String name) {
@@ -33,6 +36,7 @@ public class QuteResource {
     }
 
     @GET
+    @RolesAllowed("admin")
     @Path("bookings")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance getBookings(@QueryParam("name") String name) {
@@ -41,6 +45,7 @@ public class QuteResource {
     }
 
     @GET
+    @RolesAllowed("admin")
     @Path("bookings-formatted")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance getFormattedBookings(@QueryParam("name") String name) {
