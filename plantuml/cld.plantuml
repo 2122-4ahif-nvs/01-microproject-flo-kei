@@ -1,0 +1,27 @@
+@startuml
+
+    class HotelRoom{
+        - Long: id
+        - int: roomNumber
+        - int: maxPeople
+        - double: pricePerNight
+    }
+
+    class Booking {
+        - Long: id
+        - Date: bookingDate
+        - Date: arrivalDate
+        - Date: departureDate
+        - HotelRoom: room
+        - Customer: customer
+    }
+
+    class Customer {
+        - Long: id
+        - string: name
+    }
+
+    Booking "*" --> "1" HotelRoom
+    Booking "*" --> "1" Customer
+
+@enduml
