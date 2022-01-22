@@ -1,0 +1,12 @@
+###
+GET localhost:8080/api/hello?name=world HTTP/1.1
+# public service should work
+
+###
+GET http://localhost:8080/api/bookings-without-qute
+# view all bookings should fail because of lacking permissions (no auth)
+
+###
+GET http://admin:admin@localhost:8080/api/bookings-without-qute
+# view all bookings should work because of admin user
+

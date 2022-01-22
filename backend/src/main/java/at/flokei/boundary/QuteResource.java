@@ -12,6 +12,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("api")
 public class QuteResource {
@@ -42,6 +43,15 @@ public class QuteResource {
     public TemplateInstance getBookings(@QueryParam("name") String name) {
         var bookings = bookingRepo.getBookingsOfCustomer(name);
         return quteBookingOverview.data("bookings", bookings);
+    }
+
+    @GET
+    @RolesAllowed("admin")
+    @Path("bookings-without-qute")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBookingsWithoutQute() {
+        var bookings = bookingRepo.getAll();
+        return Response.ok(bookings).build();
     }
 
     @GET
