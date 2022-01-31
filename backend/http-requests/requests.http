@@ -10,3 +10,18 @@ GET http://localhost:8080/api/bookings-without-qute
 GET http://admin:admin@localhost:8080/api/bookings-without-qute
 # view all bookings should work because of admin user
 
+###
+# keycloak requests
+GET localhost:8080/api/users
+
+###
+POST http://localhost:8180/auth/realms/quarkus/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_secret=968eacdc-9897-4586-841e-cbb89504be62&client_id=my-quarkus-service&username=john&password=passme&grant_type=password
+
+> {% client.global.set("access_token",response.body.access_token); %}
+
+###
+GET localhost:8080/api/users
+Authorization: Bearer {{access_token}}
