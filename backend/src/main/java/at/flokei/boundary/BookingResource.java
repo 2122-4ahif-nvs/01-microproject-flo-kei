@@ -1,6 +1,7 @@
 package at.flokei.boundary;
 
 import at.flokei.Greeter;
+import at.flokei.boundary.client.BookingService;
 import at.flokei.control.BookingRepository;
 import at.flokei.entity.Booking;
 import io.quarkus.grpc.GrpcClient;
@@ -10,15 +11,14 @@ import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Mutation;
 import org.eclipse.microprofile.graphql.Query;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Set;
 
 @GraphQLApi
 public class BookingResource {
@@ -39,4 +39,5 @@ public class BookingResource {
     public Booking addBooking(@Valid Booking booking) {
         return repo.addBooking(booking);
     }
+
 }
