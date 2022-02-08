@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletionStage;
 
 @Path("")
 public class UserResource {
@@ -40,5 +41,12 @@ public class UserResource {
     @Path("/{path-param}")
     public Set<Booking> getByPathParam(@PathParam("path-param") String pathParam) {
         return bookingService.getByPathParam(pathParam);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("async/{path-param}")
+    public CompletionStage<Set<Booking>> getByPathParamAsync(@PathParam("path-param") String pathParam) {
+        return bookingService.getByPathParamAsync(pathParam);
     }
 }
