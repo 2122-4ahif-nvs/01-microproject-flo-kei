@@ -22,7 +22,7 @@ This micro-project aims to give customers the possibility to book rooms, view th
 
 
 == Description of used technologies
-Multiple technologies were used for realising these functionalities:
+The following technologies were used for realising these functionalities:
 
  * <<graphql.adoc#?,GraphQL>>
  * <<validation.adoc#?,Validation>>
