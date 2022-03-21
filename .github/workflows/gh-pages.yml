@@ -11,10 +11,16 @@ jobs:
     steps:
       - name: Setup repo
         uses: actions/checkout@v2
-      - name: install stuff
-        run: |
-          sudo apt install -y tree
-          sudo ls -lah
-          sudo tree -d
-          sudo ls / -lah
-
+      - name: Setup asciidoctor
+        run: sudo apt-get install -y asciidoctor
+      - name: Setup asciidoctor-diagram
+        run: sudo gem install asciidoctor-diagram
+      - name: Setup graphviz
+        run: sudo apt install graphviz
+      - name: Build documentation
+        run: ./build-html-docker.sh
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./gh-pages
