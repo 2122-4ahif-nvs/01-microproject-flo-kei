@@ -16,4 +16,5 @@ jobs:
           sudo apt install -y tree
           sudo ls -lah
           sudo tree -d
+          sudo ls / -lah
 
