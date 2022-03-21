@@ -7,7 +7,7 @@
 <meta name="generator" content="Asciidoctor 2.0.17">
 <meta name="author" content="Florian Keintzel">
 <link rel="icon" type="image/png" href="themes/favicon.png">
-<title>Technology Notes: Security with JPA</title>
+<title>Technology Notes: Keycloak</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -664,11 +664,11 @@ pre.rouge .hll * {
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>Technology Notes: Security with JPA</h1>
+<h1>Technology Notes: Keycloak</h1>
 <div class="details">
 <span id="author" class="author">Florian Keintzel</span><br>
-<span id="revnumber">version 1.0.2,</span>
-<span id="revdate">2022-01-22</span>
+<span id="revnumber">version 1.0.1,</span>
+<span id="revdate">2022-01-31</span>
 <br><span id="revremark">Technology-Notes update</span>
 </div>
 <div id="toc" class="toc2">
@@ -676,9 +676,7 @@ pre.rouge .hll * {
 <ul class="sectlevel1">
 <li><a href="#_what_is_it">1. What is it?</a></li>
 <li><a href="#_similar_technologies">2. Similar Technologies</a></li>
-<li><a href="#_related_technologies">3. Related Technologies</a></li>
-<li><a href="#_implementation">4. Implementation</a></li>
-<li><a href="#_testing">5. Testing</a></li>
+<li><a href="#_implementation">3. Implementation</a></li>
 </ul>
 </div>
 </div>
@@ -689,39 +687,7 @@ pre.rouge .hll * {
 <div class="ulist">
 <ul>
 <li>
-<p>Security in Quarkus is used to limit the access users have in terms of</p>
-<div class="ulist">
-<ul>
-<li>
-<p>which pages they can visit</p>
-</li>
-<li>
-<p>how they can interact with the server</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Security in quarkus can be realised using a single one or a mix of the following techniques:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://quarkus.io/guides/security-properties">Security with .properties file</a></p>
-</li>
-<li>
-<p><a href="https://quarkus.io/guides/security-jpa">Security with JPA</a></p>
-</li>
-<li>
-<p><a href="https://quarkus.io/guides/security-jdbc">Security with JDBC</a></p>
-</li>
-<li>
-<p><a href="https://quarkus.io/guides/security-openid-connect-web-authentication">Security with OpenID Connect for Web-Applications</a></p>
-</li>
-<li>
-<p><a href="https://quarkus.io/guides/security-openid-connect">Security with OpenID Connect for Service-Applications</a></p>
-</li>
-</ul>
-</div>
+<p>Authentication Module with additional features based on oAuth v2</p>
 </li>
 </ul>
 </div>
@@ -733,198 +699,105 @@ pre.rouge .hll * {
 <div class="ulist">
 <ul>
 <li>
-<p>Spring Security</p>
-</li>
-<li>
-<p>.NET Core Security</p>
+<p>oAuth v2</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_related_technologies"><a class="anchor" href="#_related_technologies"></a>3. Related Technologies</h2>
+<h2 id="_implementation"><a class="anchor" href="#_implementation"></a>3. Implementation</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p>OAuth 2.0</p>
-</li>
-<li>
-<p>Keycloak</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_implementation"><a class="anchor" href="#_implementation"></a>4. Implementation</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>add necessary extensions:</p>
+<p>add jax-rs and openID-Connect</p>
 </li>
 </ul>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>quarkus ext add io.quarkus:quarkus-security-jpa</pre>
+<pre>quarkus ext add io.quarkus:quarkus-resteasy</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>quarkus ext add io.quarkus:quarkus-oidc</code></pre>
 </div>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>add role class</p>
+<p>add docker-compose-keycloak.yml</p>
 </li>
 </ul>
 </div>
 <div class="listingblock">
+<div class="title">docker-compose-keycloak.yml</div>
 <div class="content">
-<pre>@Entity
-@Table(name = "role")
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+<pre class="rouge highlight"><code data-lang="dockerfile">version: '3.9'
+services:
+  keycloak:
+    container_name: keycloak
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=passme
+      - DB_VENDOR=h2
+    ports:
+      - '8180:8080'
+    image: 'quay.io/keycloak/keycloak:15.0.2'
+    networks:
+      - keycloak_network
 
-    @ManyToMany(mappedBy = "roles")
-    public List&lt;Customer&gt; users;
-
-    @RolesValue <i class="conum" data-value="1"></i><b>(1)</b>
-    public String role;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-}</pre>
+networks:
+  keycloak_network:
+    name: keycloak_network
+    driver: bridge</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Specifies the name of the role, this way jpa-security knows, which class should be used for roles and which property is used for the name</td>
-</tr>
-</table>
+<div class="ulist">
+<ul>
+<li>
+<p>add keycloak-up.sh and keycloak-down.sh</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">keycloak-up.sh</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="shell script">docker-compose -f docker-compose-keycloak.yml up -d</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">keycloak-down.sh</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="shell script">docker-compose -f docker-compose-keycloak.yml down</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Modify Customer class to be used as User-Class for authentication as well.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="java"><span class="nd">@Entity</span>
-<span class="nd">@Table</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"HOTEL_CUSTOMER"</span><span class="o">)</span>
-<span class="nd">@UserDefinition</span> <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Customer</span> <span class="o">{</span>
-    <span class="nd">@Id</span> <span class="nd">@GeneratedValue</span><span class="o">(</span><span class="n">strategy</span> <span class="o">=</span> <span class="nc">GenerationType</span><span class="o">.</span><span class="na">IDENTITY</span><span class="o">)</span>
-    <span class="kd">private</span> <span class="nc">Long</span> <span class="n">id</span><span class="o">;</span>
-
-    <span class="nd">@NotBlank</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">"Name cannot be blank!"</span><span class="o">)</span>
-    <span class="nd">@Username</span> <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
-
-    <span class="nd">@Password</span> <i class="conum" data-value="3"></i><b>(3)</b>
-    <span class="nd">@NotBlank</span><span class="o">(</span><span class="n">message</span> <span class="o">=</span> <span class="s">"Password cannot be blank"</span><span class="o">)</span>
-    <span class="kd">private</span> <span class="nc">String</span> <span class="n">pw</span><span class="o">;</span>
-
-    <span class="nd">@ManyToMany</span>
-    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Role</span><span class="o">&gt;</span> <span class="n">role</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
-<span class="o">}</span></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Declares Class as User, which can be used by jpa-authentication</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Specifies the name field as the username used for authentication</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Adds a field for storing the user-chosen password (not in plaintext of course)</td>
-</tr>
-</table>
+<p>Start keycloak using <code>./keycloak-up.sh</code> (don&#8217;t forget to add execution permissions (chmod +x "filename"))</p>
 </div>
 <div class="paragraph">
-<p>Add permission specifications to Resources, Endpoints, APIs, Services.</p>
+<p>connect to localhost:8180 and login with admin credentials:
+username: admin
+password: passme</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="java"><span class="nd">@GET</span>
-    <span class="nd">@PermitAll</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="nd">@Path</span><span class="o">(</span><span class="s">"hello"</span><span class="o">)</span>
-    <span class="nd">@Produces</span><span class="o">(</span><span class="nc">MediaType</span><span class="o">.</span><span class="na">TEXT_HTML</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="nc">TemplateInstance</span> <span class="nf">getHello</span><span class="o">(</span><span class="nd">@QueryParam</span><span class="o">(</span><span class="s">"name"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">quteTemplate</span><span class="o">.</span><span class="na">data</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="n">name</span><span class="o">);</span>
-    <span class="o">}</span></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>allows anyone to access the resource</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="java"><span class="nd">@GET</span>
-    <span class="nd">@RolesAllowed</span><span class="o">(</span><span class="s">"admin"</span><span class="o">)</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="nd">@Path</span><span class="o">(</span><span class="s">"bookings"</span><span class="o">)</span>
-    <span class="nd">@Produces</span><span class="o">(</span><span class="nc">MediaType</span><span class="o">.</span><span class="na">TEXT_HTML</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="nc">TemplateInstance</span> <span class="nf">getBookings</span><span class="o">(</span><span class="nd">@QueryParam</span><span class="o">(</span><span class="s">"name"</span><span class="o">)</span> <span class="nc">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
-        <span class="kt">var</span> <span class="n">bookings</span> <span class="o">=</span> <span class="n">bookingRepo</span><span class="o">.</span><span class="na">getBookingsOfCustomer</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
-        <span class="k">return</span> <span class="n">quteBookingOverview</span><span class="o">.</span><span class="na">data</span><span class="o">(</span><span class="s">"bookings"</span><span class="o">,</span> <span class="n">bookings</span><span class="o">);</span>
-    <span class="o">}</span></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Only allows access to those with the role "admin"</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_testing"><a class="anchor" href="#_testing"></a>5. Testing</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>For testing the current access authentication, use the http requests given in the http-requests folder.</p>
+<p>add client with id <code>my-quarkus-service</code></p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>###
-GET localhost:8080/api/hello?name=world HTTP/1.1
-# public service should work
-
-###
-GET http://localhost:8080/api/bookings-without-qute
-# view all bookings should fail because of lacking permissions (no auth)
-
-###
-GET http://admin:admin@localhost:8080/api/bookings-without-qute
-# view all bookings should work because of admin user</pre>
+<div class="paragraph">
+<p>change access type to confidential</p>
 </div>
+<div class="paragraph">
+<p>add new roles 'user' and 'admin'
+add new user 'admin' with password 'passme'</p>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.2<br>
+Version 1.0.1<br>
 Last updated 2022-03-21 09:09:40 UTC
 </div>
 </div>
